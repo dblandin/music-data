@@ -1,0 +1,12 @@
+development: &base
+  adapter:  postgresql
+  database: music_data_development
+  encoding: utf8
+  host: localhost
+  min_messages: error
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  username: <%= ENV['DATABASE_USERNAME'] %>
+
+test: &test
+  <<: *base
+  database: music_data_test
