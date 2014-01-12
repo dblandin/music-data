@@ -9,5 +9,10 @@ gem 'jbuilder',     '~> 1.2'
 gem 'unicorn',      '~> 4.7.0'
 gem 'dotenv-rails', '~> 0.9.0'
 
-gem 'capistrano', '~> 3.0.1', group: :development
-gem 'debugger',   '~> 1.6.3', group: [:development, :test]
+group :development do
+  gem 'capistrano', '~> 3.0.1'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rails'
+end
+
+gem 'debugger', '~> 1.6.3', group: [:development, :test]
