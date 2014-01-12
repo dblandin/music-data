@@ -30,7 +30,7 @@ namespace :deploy do
   desc 'Start the application'
   task :start do
     on roles(:app), in: :sequence do
-      execute "cd #{current_path} && source .env && bundle exec unicorn_rails -E $RACK_ENV -D"
+      execute "cd #{current_path} && source .env && bundle exec unicorn_rails -c config/unicorn.rb -E $RACK_ENV -D"
     end
   end
 
@@ -56,7 +56,6 @@ namespace :deploy do
   end
 
   before 'check:linked_files', 'deploy:dotenv'
-  after 'deploy:updated', 'deploy:migrate'
 
   after :finishing, 'deploy:cleanup'
 end
