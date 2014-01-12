@@ -1,27 +1,15 @@
-preload_app       true
-pid               ENV['UNICORN_PIDFILE']
-worker_processes  (ENV['UNICORN_WORKERS'] || 8).to_i
-timeout           (ENV['UNICORN_TIMEOUT'] || 60).to_i
-listen            ENV['UNICORN_LISTEN'], backlog: (ENV['UNICORN_BACKLOG'] || 8).to_i
+@dir = "/var/www/music-data"
 
-# Buffer up to 2mb before caching to disk
-client_body_buffer_size 2097152
+worker_processes 2
+working_directory "#{@dir}/current"
 
-before_fork do |server, worker|
-  ActiveRecord::Base.connection.disconnect! if defined?(ActiveRecord::Base)
-end
+timeout 30
 
-after_fork do |server, worker|
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord::Base)
+listen "#{@dir}/shared/tmp/sockets/unicorn.sock", backlog: 64
 
-  # Gracefully kill the previous Unicorn binary
-  old_pidfile = "#{ENV['UNICORN_PIDFILE']}.oldbin"
+# Set process id path
+pid "#{@dir}/shared/tmp/pids/unicorn.pid"
 
-  if File.exists?(old_pidfile) && server.pid != old_pidfile
-    begin
-      Process.kill('QUIT', File.read(old_pidfile).to_i)
-    rescue Errno::ENOENT, Errno::ESRCH
-    end
-  end
-end
-
+# Set log file paths
+stderr_path "#{@dir}/current/log/unicorn.stderr.log"
+stdout_path "#{@dir}/current/log/unicorn.stdout.log"
