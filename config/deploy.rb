@@ -1,7 +1,7 @@
 set :application, 'music-data'
 set :repo_url,    'git@github.com:dblandin/music-data.git'
-
-ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+set :branch,      'master'
+set :deploy_via,  :remote_cache
 
 set :deploy_to, '/var/www/music-data'
 set :scm,                :git

@@ -7,6 +7,10 @@ development: &base
   password: <%= ENV['DATABASE_PASSWORD'] %>
   username: <%= ENV['DATABASE_USERNAME'] %>
 
-test: &test
+test:
   <<: *base
   database: music_data_test
+
+production:
+  <<: *base
+  database: music_data
