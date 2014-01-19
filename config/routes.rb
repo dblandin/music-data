@@ -1,8 +1,10 @@
 MusicData::Application.routes.draw do
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+  unless Rails.env.test?
+    require 'sidekiq/web'
 
-  # You can have the root of your site routed with "root"
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   root 'welcome#index'
 
   # Example of regular route:
