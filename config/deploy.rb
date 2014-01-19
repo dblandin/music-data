@@ -59,3 +59,22 @@ namespace :deploy do
 
   after :finishing, 'deploy:cleanup'
 end
+namespace :sidekiq do
+  sidekiq_pidfile = "#{shared_path}/tmp/pids/sidekiq.pid"
+  env_file        = "#{shared_path}/.env"
+
+  desc 'Start sidekiq'
+  task :start do
+    on roles(:app), in: :parallel do
+      execute "cd #{current_path} && source #{env_file} && bundle exec sidekiq -d -i 0 -P #{sidekiq_pidfile} -e production -c $SIDEKIQ_WORKERS -q default -L #{current_path}/log/sidekiq.log"
+    end
+  end
+
+  desc 'Stop sidekiq'
+  task :stop do
+    on roles(:app), in: :parallel do
+      execute "cd #{current_path} && kill -TERM $(cat #{sidekiq_pidfile})"
+    end
+  end
+end
+
