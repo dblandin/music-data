@@ -37,14 +37,14 @@ namespace :deploy do
   desc 'Stop the application'
   task :stop do
     on roles(:app), in: :sequence do
-      execute "cd #{current_path} && kill -QUIT $(cat #{unicorn_pidfile})"
+      execute "if [ -p #{unicorn_pidfile} ]; then cd #{current_path} && kill -QUIT $(cat #{unicorn_pidfile}) | 'Unicorn is not running'; fi"
     end
   end
 
   desc 'Restart the application'
   task :restart do
     on roles(:app), in: :sequence do
-      execute "cd #{current_path} && kill -USR2 $(cat #{unicorn_pidfile})"
+      execute "if [ -p #{unicorn_pidfile} ]; then cd #{current_path} && kill -USR2 $(cat #{unicorn_pidfile}) | 'Unicron is not running'; fi"
     end
   end
 
@@ -73,8 +73,7 @@ namespace :sidekiq do
   desc 'Stop sidekiq'
   task :stop do
     on roles(:app), in: :parallel do
-      execute "cd #{current_path} && kill -TERM $(cat #{sidekiq_pidfile})"
+      execute "if [ -p #{sidekiq_pidfile} ]; then cd #{current_path} && kill -TERM $(cat #{sidekiq_pidfile}) | echo 'Sidekiq is not running'; fi"
     end
   end
 end
-
