@@ -1,20 +1,13 @@
 require 'sidekiq'
 
-@dir = '/var/www/music-data'
+preload_app      true
+worker_processes (ENV['UNICORN_WORKERS'] || 8).to_i
+timeout          (ENV['UNICORN_TIMEOUT'] || 30).to_i
+listen           ENV['UNICORN_LISTEN'], backlog: (ENV['UNICORN_BACKLOG'] || 8).to_i
+pid              ENV['UNICORN_PIDFILE']
 
-worker_processes 8
-working_directory "#{@dir}/current"
-
-timeout 30
-
-listen "#{@dir}/shared/tmp/sockets/unicorn.sock", backlog: 64
-
-# Set process id path
-pid "#{@dir}/shared/tmp/pids/unicorn.pid"
-
-# Set log file paths
-stderr_path "#{@dir}/current/log/unicorn.stderr.log"
-stdout_path "#{@dir}/current/log/unicorn.stdout.log"
+stderr_path ENV['UNICORN_ERROR_LOG']
+stderr_path ENV['UNICORN_LOG']
 
 before_fork do |server, worker|
   ActiveRecord::Base.connection.disconnect! if defined?(ActiveRecord::Base)
