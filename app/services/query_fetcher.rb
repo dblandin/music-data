@@ -45,7 +45,9 @@ class QueryFetcher
   end
 
   def queue_up_requests
-    ArtistFetcherWorker.perform_async(fetch_request_params)
+    fetch_request_params.each do |worker_params|
+      ArtistFetcherWorker.perform_async(worker_params)
+    end
   end
 
   def fetch_request_params
