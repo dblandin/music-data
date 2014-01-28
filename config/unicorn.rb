@@ -1,3 +1,5 @@
+require 'sidekiq'
+
 @dir = '/var/www/music-data'
 
 worker_processes 8
