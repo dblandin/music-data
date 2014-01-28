@@ -1,6 +1,6 @@
 @dir = '/var/www/music-data'
 
-worker_processes 2
+worker_processes 8
 working_directory "#{@dir}/current"
 
 timeout 30
