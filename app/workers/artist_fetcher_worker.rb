@@ -28,7 +28,15 @@ class ArtistFetcherWorker
 
     case response
     when Net::HTTPSuccess, Net::HTTPRedirection
-      ArtistBuilder.new(JSON.parse(response.body)).create
+      Artist.transaction do
+        parsed_response = JSON.parse(response.body)
+
+        artists = ArtistExtractor.new(parsed_response).extract!
+
+        artists.each do |artist_params|
+          ArtistBuilder.new(artist_params).create!
+        end
+      end
     else
       puts response.message
     end

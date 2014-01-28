@@ -45,10 +45,12 @@ class QueryFetcher
   end
 
   def queue_up_requests
-    1.upto(pages) do |page|
-      params = request_params.merge('page' => page)
+    ArtistFetcherWorker.perform_async(fetch_request_params)
+  end
 
-      ArtistFetcherWorker.perform_async(params)
+  def fetch_request_params
+    1.upto(pages).map do |page|
+      request_params.merge('page' => page)
     end
   end
 
