@@ -19,7 +19,7 @@ after_fork do |server, worker|
   Sidekiq.configure_client do |config|
     config.redis = {
       url:       ENV['REDIS_URL'],
-      namespace: 'sidekiq',
+      namespace: ENV['SIDEKIQ_NAMESPACE'],
       timeout:   1,
       size:      16
     }
