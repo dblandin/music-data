@@ -59,6 +59,7 @@ namespace :deploy do
 
   after :finishing, 'deploy:cleanup'
 end
+
 namespace :sidekiq do
   sidekiq_pidfile = "#{shared_path}/tmp/pids/sidekiq.pid"
   env_file        = "#{shared_path}/.env"
@@ -77,3 +78,30 @@ namespace :sidekiq do
     end
   end
 end
+
+namespace :clockwork do
+  env_file   = "#{shared_path}/.env"
+  clockworkd = "bundle exec clockworkd -c config/schedule.rb -d #{current_path} --pid-dir=#{shared_path}/tmp/pids"
+
+  desc 'Start clockwork'
+  task :start do
+    on roles(:clock) do
+      execute "cd #{current_path} && source #{env_file} && #{clockworkd} start"
+    end
+  end
+
+  desc 'Stop clockwork'
+  task :stop do
+    on roles(:clock) do
+      execute "cd #{current_path} && source #{env_file} && #{clockworkd} stop"
+    end
+  end
+
+  desc 'Restart clockwork'
+  task restart: ['clockwork:stop', 'clockwork:start']
+
+  after 'deploy:stop',    'clockwork:stop'
+  after 'deploy:start',   'clockwork:start'
+  after 'deploy:restart', 'clockwork:restart'
+end
+
