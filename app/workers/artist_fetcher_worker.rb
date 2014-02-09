@@ -1,4 +1,7 @@
 class ArtistFetcherWorker
+  API_KEYS          = ['493b35696b6907219cca0c19c9170fed']
+  MINUTE_RATE_LIMIT = 180
+
   attr_reader :page
 
   include Sidekiq::Worker
@@ -6,9 +9,11 @@ class ArtistFetcherWorker
   def perform(query, page, force = false)
     @page = page
 
+    return ArtistFetcherWorker.perform_in(1.minute, query, page, force) if rate_limit_reached?
+
     unless force || already_fetched?
       Artist.transaction do
-        fetcher = ArtistFetcher.new(query, page)
+        fetcher = ArtistFetcher.new(query, page, available_keys.first)
 
         artists = ArtistExtractor.new(fetcher.artists).extract!
 
@@ -21,5 +26,13 @@ class ArtistFetcherWorker
 
   def already_fetched?
     Collection.exists?(page: page, type: 'ArtistCollection')
+  end
+
+  def available_keys
+    @available_keys ||= API_KEYS.select { |key| $redis.get("rate-#{key}").to_i < MINUTE_RATE_LIMIT }
+  end
+
+  def rate_limit_reached?
+    available_keys.empty?
   end
 end

@@ -7,9 +7,6 @@ describe 'Scraping Artists', vcr: vcr_options do
 
     last_response.status.should == 200
     expect(decoded_response).to have_key(:results)
-
-    artists = ArtistExtractor.new(decoded_response).extract!
-    expect(artists.count).to eq(30)
   end
 
   it 'collects artists at a specific page' do

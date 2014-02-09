@@ -11,7 +11,9 @@ gem 'dotenv-rails', '~> 0.9.0'
 gem 'sinatra',      '~> 1.3.3', require: false
 gem 'sidekiq',      '~> 2.17.3'
 gem 'oj',           '~> 2.4.3'
-gem 'faraday'
+gem 'hiredis',      '~> 0.4.5'
+gem 'redis',        '~> 3.0.2'
+
 
 group :production do
   gem 'clockwork', '~> 0.7'

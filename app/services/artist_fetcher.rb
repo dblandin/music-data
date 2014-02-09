@@ -4,13 +4,12 @@ require 'json_tools'
 class ArtistFetcher
   include JSONTools
 
-  API_KEY = '493b35696b6907219cca0c19c9170fed'
+  attr_reader :query, :page, :api_key, :response
 
-  attr_reader :query, :response, :page
-
-  def initialize(query, page = 1)
-    @query = query
-    @page  = page
+  def initialize(query, page = 1, api_key = '493b35696b6907219cca0c19c9170fed')
+    @query   = query
+    @page    = page
+    @api_key = api_key
   end
 
   def base_url
@@ -21,7 +20,7 @@ class ArtistFetcher
     { 'method'  => 'artist.search',
       'page'    => page,
       'artist'  => query,
-      'api_key' => API_KEY,
+      'api_key' => api_key,
       'format'  => 'json' }
   end
 
@@ -32,6 +31,8 @@ class ArtistFetcher
     response = Net::HTTP.start(uri.host, uri.port) do |http|
       http.request(request)
     end
+
+    $redis.incr("rate-#{api_key}")
 
     JSON.parse(response.body)
   end
