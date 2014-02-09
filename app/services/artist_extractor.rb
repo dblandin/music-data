@@ -1,12 +1,12 @@
 class ArtistExtractor
-  attr_reader :params
+  attr_reader :artists_json
 
-  def initialize(params)
-    @params = params.with_indifferent_access
+  def initialize(artists_json)
+    @artists_json = artists_json
   end
 
   def extract!
-    params.fetch(:results).fetch(:artistmatches).fetch(:artist).map { |artist_params| ArtistParamsExtractor.new(artist_params).extract! }
+    artists_json.map { |artist_params| ArtistParamsExtractor.new(artist_params).extract! }
   end
 
   class ArtistParamsExtractor
@@ -17,8 +17,8 @@ class ArtistExtractor
     end
 
     def extract!
-      { mbid:        params.fetch(:mbid),
-        name:        params.fetch(:name) }
+      { mbid: params['mbid'],
+        name: params['name'] }
     end
   end
 end

@@ -6,19 +6,24 @@ class QueryFetcher
 
   API_KEY = '493b35696b6907219cca0c19c9170fed'
 
-  attr_reader :query, :json_response
+  attr_reader :query, :json_response, :page
 
-  def initialize(query)
+  def initialize(query, page)
     @query = query
+    @page  = page
   end
 
   def base_url
     'http://ws.audioscrobbler.com/2.0/'
   end
 
+  def fetch_page(page)
+    ArtistFetcherWorker.perform_async(request_params.merge('page' => page))
+  end
+
   def request_params
     { 'method'  => 'artist.search',
-      'page'    => '1',
+      'page'    => page || '1',
       'artist'  => query,
       'api_key' => API_KEY,
       'format'  => 'json' }

@@ -14,7 +14,7 @@ class ArtistBuilder
   end
 
   def find_artist
-    Artist.where(mbid: artist_params[:mbid]).first
+    Artist.where("mbid !~ '^\s*$' AND mbid = ?", artist_params[:mbid]).first
   end
 
   def build_artist
