@@ -1,0 +1,2 @@
+class ArtistCollection < Collection
+end
