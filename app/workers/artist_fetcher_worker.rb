@@ -1,5 +1,10 @@
 class ArtistFetcherWorker
-  API_KEYS          = ['493b35696b6907219cca0c19c9170fed', 'af9dcd7846bef3fc7980542409f79e69']
+  API_KEYS = %w(
+    493b35696b6907219cca0c19c9170fed
+    af9dcd7846bef3fc7980542409f79e69
+    d64eda6fa585771c598d892425a8cdf3
+  )
+
   MINUTE_RATE_LIMIT = 180
 
   attr_reader :page
