@@ -55,6 +55,8 @@ namespace :deploy do
     end
   end
 
+  after 'deploy:updated', 'deploy:migrate'
+
   before 'check:linked_files', 'deploy:dotenv'
 
   after :finishing, 'deploy:cleanup'
