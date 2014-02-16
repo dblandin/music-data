@@ -29,21 +29,21 @@ namespace :deploy do
 
   desc 'Start the application'
   task :start do
-    on roles(:app), in: :sequence do
+    on roles(:web), in: :sequence do
       execute "cd #{current_path} && source .env && bundle exec unicorn_rails -c config/unicorn.rb -E $RACK_ENV -D"
     end
   end
 
   desc 'Stop the application'
   task :stop do
-    on roles(:app), in: :sequence do
+    on roles(:web), in: :sequence do
       execute "if [ -f #{unicorn_pidfile} ]; then cd #{current_path} && kill -QUIT $(cat #{unicorn_pidfile}) | echo 'Unicorn is not running'; fi"
     end
   end
 
   desc 'Restart the application'
   task :restart do
-    on roles(:app), in: :sequence do
+    on roles(:web), in: :sequence do
       execute "if [ -f #{unicorn_pidfile} ]; then cd #{current_path} && kill -USR2 $(cat #{unicorn_pidfile}) | echo 'Unicorn is not running'; fi"
     end
   end
