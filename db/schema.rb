@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140213044539) do
+ActiveRecord::Schema.define(version: 20140216001943) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,5 +30,7 @@ ActiveRecord::Schema.define(version: 20140213044539) do
     t.datetime "updated_at"
     t.string   "query"
   end
+
+  add_index "collections", ["query", "page"], name: "index_collections_on_query_and_page", using: :btree
 
 end
