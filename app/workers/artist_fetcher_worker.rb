@@ -1,10 +1,4 @@
 class ArtistFetcherWorker
-  API_KEYS = %w(
-    493b35696b6907219cca0c19c9170fed
-    af9dcd7846bef3fc7980542409f79e69
-    d64eda6fa585771c598d892425a8cdf3
-  )
-
   MINUTE_RATE_LIMIT = 180
 
   attr_reader :page, :query
@@ -34,11 +28,15 @@ class ArtistFetcherWorker
     ArtistCollection.exists?(query: query, page: page)
   end
 
-  def available_keys
-    @available_keys ||= API_KEYS.select { |key| $redis.get("rate-#{key}").to_i < MINUTE_RATE_LIMIT }
-  end
-
   def rate_limit_reached?
     available_keys.empty?
+  end
+
+  def available_keys
+    @available_keys ||= api_keys.select { |key| $redis.get("rate-#{key}").to_i < MINUTE_RATE_LIMIT }
+  end
+
+  def api_keys
+    @api_keys ||= $redis.get('api_keys').split(',')
   end
 end
